@@ -9,7 +9,7 @@ function versionRegex() {
     return new RegExp(`${prefix}(\\d+)\\.(\\d+)\\.(\\d+)`);
 }
 
-async function findLastVersion() {
+async function findLastVersion(): Promise<string | undefined> {
     const token = core.getInput('token');
 
     const { data } = await github.getOctokit(token).repos.listTags({ ...github.context.repo });
@@ -25,7 +25,7 @@ async function findLastVersion() {
     };
     const latest = versions.sort((a, b) => s(a) - s(b))[0];
 
-    return data[versions.indexOf(latest)].name;
+    return data[versions.indexOf(latest)]?.name;
 }
 
 function increment(version: string, by: string) {

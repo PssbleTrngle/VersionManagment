@@ -9162,18 +9162,19 @@ function versionRegex() {
     return new RegExp(`${prefix}(\\d+)\\.(\\d+)\\.(\\d+)`);
 }
 async function findLastVersion() {
+    var _a;
     const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('token');
     const { data } = await _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token).repos.listTags({ ..._actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo });
     console.log('Found tags', data.map(t => t.name));
     const regex = versionRegex();
     const versions = data.map(t => t.name.match(regex)).filter(v => !!v);
-    console.log('Found previous versions', versions);
+    console.log('Found previous versions', versions.map(v => v[0]));
     const s = (a) => {
         const [, m, r, b] = a.map(v => Number.parseInt(v));
         return m * 1000000 + r * 1000 + b;
     };
     const latest = versions.sort((a, b) => s(a) - s(b))[0];
-    return data[versions.indexOf(latest)].name;
+    return (_a = data[versions.indexOf(latest)]) === null || _a === void 0 ? void 0 : _a.name;
 }
 function increment(version, by) {
     const match = version.match(versionRegex());
