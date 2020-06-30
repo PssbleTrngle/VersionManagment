@@ -15,7 +15,6 @@ jobs:
         id: version
         with:
           token: ${{secrets.GITHUB_TOKEN}}
-          last-version: v0.1.7
           prefix: v
 
       - name: Get output
