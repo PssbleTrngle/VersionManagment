@@ -40,8 +40,10 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(286);
+/******/ 		return __webpack_require__(903);
 /******/ 	};
+/******/ 	// initialize runtime
+/******/ 	runtime(__webpack_require__);
 /******/
 /******/ 	// run startup
 /******/ 	return startup();
@@ -2210,76 +2212,6 @@ module.exports.sync = spawnSync;
 module.exports._parse = parse;
 module.exports._enoent = enoent;
 
-
-/***/ }),
-
-/***/ 286:
-/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
-
-const core = __webpack_require__(694);
-const github = __webpack_require__(30);
-
-
-function versionRegex() {
-    const prefix = core.getInput('prefix');
-    const regex = new RegExp(`${prefix}(\d+)\.(\d+)\.(\d+)`);
-}
-
-async function findLastVersion() {
-    const token = core.getInput('token');
-
-    const { data } = await github.getOctokit(token).repos.listTags({ ...github.context.repo });
-
-    const regex = versionRegex();
-    const versions = data.map(t => t.name.match(regex)).filter(v => !!v);
-
-    const s = ([, m, r, b]) => m * 1000000 + r * 1000 + b;
-    const latest = versions.sort((a, b) => s(a) - s(b))[0];
-
-    return latest;
-}
-
-function increment(version, by) {
-    const match = version.match(versionRegex())
-    const prefix = core.getInput('prefix');
-
-    console.log('Last version', version);
-
-    if (!match) throw new Error(`'${version}' is not a valid version`)
-    
-    console.log('Match', match);
-
-    const fragments = ['major', 'release', 'bug'];
-    const i = fragments.indexOf(by);
-    if (i < 0) throw new Error(`'${by} is not a valid fragment`)
-    const v = match.slice(1, match.length).map(d => Number.parseInt(d));
-
-    console.log('Version parts', v.join(', '));
-
-    v[i]++;
-    
-    return prefix + v.join('.');
-}
-
-async function run() {
-
-    const last_version = core.getInput('last-version') || await findLastVersion();
-
-    if (last_version) {
-
-        const fragment = core.getInput('default-fragment')
-        const next = increment(last_version, fragment);
-
-        core.setOutput('next', next)
-    } else {
-        const fallback = core.getInput('fallback')
-        if (!versionRegex().test(fallback)) throw new Error(`Fallback '${fallback}' is not a valid version`)
-        core.setOutput('next', fallback);
-    }
-
-}
-
-run().catch(e => core.setFailed(e.message));
 
 /***/ }),
 
@@ -4460,7 +4392,7 @@ var Stream = _interopDefault(__webpack_require__(413));
 var http = _interopDefault(__webpack_require__(605));
 var Url = _interopDefault(__webpack_require__(835));
 var https = _interopDefault(__webpack_require__(211));
-var zlib = _interopDefault(__webpack_require__(903));
+var zlib = _interopDefault(__webpack_require__(672));
 
 // Based on https://github.com/tmpvar/jsdom/blob/aa85b2abf07766ff7bf5c1f6daafb3726f2f2db5/lib/jsdom/living/blob.js
 
@@ -7213,6 +7145,13 @@ module.exports = require("util");
 
 /***/ }),
 
+/***/ 672:
+/***/ (function(module) {
+
+module.exports = require("zlib");
+
+/***/ }),
+
 /***/ 694:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -9207,9 +9146,64 @@ function processEmit (ev, arg) {
 /***/ }),
 
 /***/ 903:
-/***/ (function(module) {
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
 
-module.exports = require("zlib");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(694);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(30);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
+
+
+function versionRegex() {
+    const prefix = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('prefix');
+    return new RegExp(`${prefix}(\d+)\.(\d+)\.(\d+)`);
+}
+async function findLastVersion() {
+    const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('token');
+    const { data } = await _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token).repos.listTags({ ..._actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo });
+    const regex = versionRegex();
+    const versions = data.map(t => t.name.match(regex)).filter(v => !!v);
+    const s = (a) => {
+        const [, m, r, b] = a.map(v => Number.parseInt(v));
+        return m * 1000000 + r * 1000 + b;
+    };
+    const latest = versions.sort((a, b) => s(a) - s(b))[0];
+    return data[versions.indexOf(latest)].name;
+}
+function increment(version, by) {
+    const match = version.match(versionRegex());
+    const prefix = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('prefix');
+    console.log('Last version', version);
+    if (!match)
+        throw new Error(`'${version}' is not a valid version`);
+    console.log('Match', match);
+    const fragments = ['major', 'release', 'bug'];
+    const i = fragments.indexOf(by);
+    if (i < 0)
+        throw new Error(`'${by} is not a valid fragment`);
+    const v = match.slice(1, match.length).map(d => Number.parseInt(d));
+    console.log('Version parts', v.join(', '));
+    v[i]++;
+    return prefix + v.join('.');
+}
+async function run() {
+    const last_version = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('last-version') || await findLastVersion();
+    if (last_version) {
+        const fragment = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('default-fragment');
+        const next = increment(last_version, fragment);
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('next', next);
+    }
+    else {
+        const fallback = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('fallback');
+        if (!versionRegex().test(fallback))
+            throw new Error(`Fallback '${fallback}' is not a valid version`);
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('next', fallback);
+    }
+}
+run().catch(e => _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(e.message));
+
 
 /***/ }),
 
@@ -9489,4 +9483,43 @@ exports.getOctokitOptions = getOctokitOptions;
 
 /***/ })
 
-/******/ });
+/******/ },
+/******/ function(__webpack_require__) { // webpackRuntimeModules
+/******/ 	"use strict";
+/******/ 
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	!function() {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function getDefault() { return module['default']; } :
+/******/ 				function getModuleExports() { return module; };
+/******/ 			__webpack_require__.d(getter, 'a', getter);
+/******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getter */
+/******/ 	!function() {
+/******/ 		// define getter function for harmony exports
+/******/ 		var hasOwnProperty = Object.prototype.hasOwnProperty;
+/******/ 		__webpack_require__.d = function(exports, name, getter) {
+/******/ 			if(!hasOwnProperty.call(exports, name)) {
+/******/ 				Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ }
+);

@@ -1,6 +1,5 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-
+import * as core from '@actions/core';
+import * as github from '@actions/github';
 
 function versionRegex() {
     const prefix = core.getInput('prefix');
@@ -13,22 +12,26 @@ async function findLastVersion() {
     const { data } = await github.getOctokit(token).repos.listTags({ ...github.context.repo });
 
     const regex = versionRegex();
-    const versions = data.map(t => t.name.match(regex)).filter(v => !!v);
+    const versions = data.map(t => t.name.match(regex)).filter(v => !!v) as RegExpMatchArray[];
 
-    const s = ([, m, r, b]) => m * 1000000 + r * 1000 + b;
+    const s = (a: RegExpMatchArray) => {
+        const [, m, r, b] = a.map(v => Number.parseInt(v));
+        return m * 1000000 + r * 1000 + b
+    };
     const latest = versions.sort((a, b) => s(a) - s(b))[0];
 
-    return latest;
+    return data[versions.indexOf(latest)].name;
 }
 
-function increment(version, by) {
+function increment(version: string, by: string) {
     const match = version.match(versionRegex())
     const prefix = core.getInput('prefix');
 
     console.log('Last version', version);
 
     if (!match) throw new Error(`'${version}' is not a valid version`)
-    
+
+    console.log('Regex', versionRegex());
     console.log('Match', match);
 
     const fragments = ['major', 'release', 'bug'];
@@ -39,7 +42,7 @@ function increment(version, by) {
     console.log('Version parts', v.join(', '));
 
     v[i]++;
-    
+
     return prefix + v.join('.');
 }
 
