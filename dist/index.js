@@ -2243,13 +2243,21 @@ function increment(version, by) {
     const match = version.match(versionRegex())
     const prefix = core.getInput('prefix');
 
+    console.log('Last version', version);
+
     if (!match) throw new Error(`'${version}' is not a valid version`)
+    
+    console.log('Match', match);
 
     const fragments = ['major', 'release', 'bug'];
     const i = fragments.indexOf(by);
     if (i < 0) throw new Error(`'${by} is not a valid fragment`)
     const v = match.slice(1, match.length).map(d => Number.parseInt(d));
+
+    console.log('Version parts', v.join(', '));
+
     v[i]++;
+    
     return prefix + v.join('.');
 }
 
@@ -2258,8 +2266,6 @@ async function run() {
     const last_version = core.getInput('last-version') || await findLastVersion();
 
     if (last_version) {
-        const payload = JSON.stringify(github.context.payload, undefined, 2)
-        console.log(`The event payload: ${payload}`);
 
         const fragment = core.getInput('default-fragment')
         const next = increment(last_version, fragment);
