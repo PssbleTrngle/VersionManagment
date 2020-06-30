@@ -38,7 +38,7 @@ function increment(version: string, by: string) {
 
     const incremented = v.map((n, i) => {
         if (i === inc) return n + 1;
-        if (i < inc) return 0;
+        if (i > inc) return 0;
         else return n;
     })
 
@@ -61,11 +61,11 @@ function findFragment() {
                 return [client_payload.fragment];
             }
         }
-    })();
+    })() ?? [];
 
     console.log('Found possible fragments', labels)
 
-    return (labels ?? [])
+    return labels
         .filter(l => fragments.includes(l))
         .sort(l => fragments.indexOf(l))
         .reverse()[0];
