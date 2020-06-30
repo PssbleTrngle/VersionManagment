@@ -10,7 +10,6 @@ inputs:
   fallback:
     description: 'The fallback version used if none has been found'
     required: false
-    default: '$prefix0.1.0'
   prefix:
     description: 'The prefix used for version. ex.: v -> v1.2.0'
     required: true

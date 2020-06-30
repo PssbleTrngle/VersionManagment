@@ -9164,8 +9164,10 @@ function versionRegex() {
 async function findLastVersion() {
     const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('token');
     const { data } = await _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token).repos.listTags({ ..._actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo });
+    console.log('Found tags', data.map(t => t.name));
     const regex = versionRegex();
     const versions = data.map(t => t.name.match(regex)).filter(v => !!v);
+    console.log('Found previous versions', versions);
     const s = (a) => {
         const [, m, r, b] = a.map(v => Number.parseInt(v));
         return m * 1000000 + r * 1000 + b;
@@ -9216,7 +9218,7 @@ function findFragment() {
         .reverse()[0];
 }
 async function run() {
-    var _a, _b;
+    var _a, _b, _c;
     const last_version = (_a = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('last-version')) !== null && _a !== void 0 ? _a : await findLastVersion();
     if (last_version) {
         const fragment = (_b = findFragment()) !== null && _b !== void 0 ? _b : _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('default-fragment');
@@ -9226,7 +9228,8 @@ async function run() {
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('next', next);
     }
     else {
-        const fallback = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('fallback');
+        const prefix = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('prefix');
+        const fallback = (_c = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('fallback')) !== null && _c !== void 0 ? _c : `${prefix}1.0.0`;
         console.log('Did not find last version, using fallback', fallback);
         if (!versionRegex().test(fallback))
             throw new Error(`Fallback '${fallback}' is not a valid version`);

@@ -21,7 +21,7 @@ If triggered on `repository_dispatch`, a fragment can be specified in the `clien
 **Required** The github token.
 
 ### `fallback`
-The version used if none is found. Default `"0.1.0"`.
+The version used if none is found. Default `"$prefix1.0.0"`.
 
 ### `last-version`
 Custom version to use instead of searching in the tags.

@@ -13,9 +13,11 @@ async function findLastVersion() {
     const token = core.getInput('token');
 
     const { data } = await github.getOctokit(token).repos.listTags({ ...github.context.repo });
+    console.log('Found tags', data.map(t => t.name))
 
     const regex = versionRegex();
     const versions = data.map(t => t.name.match(regex)).filter(v => !!v) as RegExpMatchArray[];
+    console.log('Found previous versions', versions)
 
     const s = (a: RegExpMatchArray) => {
         const [, m, r, b] = a.map(v => Number.parseInt(v));
@@ -82,7 +84,8 @@ async function run() {
         const next = increment(last_version, fragment);
         core.setOutput('next', next)
     } else {
-        const fallback = core.getInput('fallback')
+        const prefix = core.getInput('prefix');
+        const fallback = core.getInput('fallback') ?? `${prefix}1.0.0`
         console.log('Did not find last version, using fallback', fallback)
         if (!versionRegex().test(fallback)) throw new Error(`Fallback '${fallback}' is not a valid version`)
         core.setOutput('next', fallback);
