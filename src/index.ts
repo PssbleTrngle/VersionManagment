@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { Webhooks } from '@octokit/webhooks'
 
-const fragments = ['major', 'release', 'bug'];
+const fragments = ['major', 'feature', 'bug'];
 
 function versionRegex() {
     const prefix = core.getInput('prefix');

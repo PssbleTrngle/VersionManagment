@@ -9156,7 +9156,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
 
 
-const fragments = ['major', 'release', 'bug'];
+const fragments = ['major', 'feature', 'bug'];
 function versionRegex() {
     const prefix = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('prefix');
     return new RegExp(`${prefix}(\\d+)\\.(\\d+)\\.(\\d+)`);

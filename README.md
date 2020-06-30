@@ -6,7 +6,7 @@ Increments based on the given fragment.
 ### `major`
 0.1.6 -> 0.1.7
 
-### `release`
+### `feature`
 0.1.6 -> 0.2.0
 
 ### `bug`
