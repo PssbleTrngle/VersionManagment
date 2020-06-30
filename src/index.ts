@@ -63,7 +63,7 @@ function findFragment() {
         }
     })();
 
-    console.log('Found possible fragments', labelw)
+    console.log('Found possible fragments', labels)
 
     return (labels ?? [])
         .filter(l => fragments.includes(l))

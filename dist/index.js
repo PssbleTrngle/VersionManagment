@@ -9193,9 +9193,8 @@ function increment(version, by) {
     return prefix + incremented.join('.');
 }
 function findFragment() {
-    var _a;
     const { eventName } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context;
-    const labels = () => {
+    const labels = (() => {
         switch (eventName) {
             case 'pull_request': {
                 console.log('Triggered on pull request');
@@ -9208,9 +9207,9 @@ function findFragment() {
                 return [client_payload.fragment];
             }
         }
-    };
-    console.log('Found possible fragments', fragments);
-    return ((_a = labels()) !== null && _a !== void 0 ? _a : [])
+    })();
+    console.log('Found possible fragments', labels);
+    return (labels !== null && labels !== void 0 ? labels : [])
         .filter(l => fragments.includes(l))
         .sort(l => fragments.indexOf(l))
         .reverse()[0];
