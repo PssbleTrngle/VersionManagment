@@ -28,10 +28,10 @@ function increment(version: string, by: string) {
     const prefix = core.getInput('prefix');
 
     console.log('Last version', version);
+    console.log('Regex', versionRegex());
 
     if (!match) throw new Error(`'${version}' is not a valid version`)
 
-    console.log('Regex', versionRegex());
     console.log('Match', match);
 
     const fragments = ['major', 'release', 'bug'];

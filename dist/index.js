@@ -9178,6 +9178,7 @@ function increment(version, by) {
     console.log('Last version', version);
     if (!match)
         throw new Error(`'${version}' is not a valid version`);
+    console.log('Regex', versionRegex());
     console.log('Match', match);
     const fragments = ['major', 'release', 'bug'];
     const i = fragments.indexOf(by);
