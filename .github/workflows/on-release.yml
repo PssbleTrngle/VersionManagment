@@ -2,9 +2,6 @@ name: On Release
 
 on:
   release:
-    types: 
-      - created
-      - edited
 
 jobs:
   bot:
