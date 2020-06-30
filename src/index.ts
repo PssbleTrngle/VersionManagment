@@ -1,5 +1,8 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
+import { Webhooks } from '@octokit/webhooks'
+
+const fragments = ['major', 'release', 'bug'];
 
 function versionRegex() {
     const prefix = core.getInput('prefix');
@@ -27,37 +30,54 @@ function increment(version: string, by: string) {
     const match = version.match(versionRegex())
     const prefix = core.getInput('prefix');
 
-    console.log('Last version', version);
-    console.log('Regex', versionRegex());
-
     if (!match) throw new Error(`'${version}' is not a valid version`)
 
-    console.log('Match', match);
-
-    const fragments = ['major', 'release', 'bug'];
     const i = fragments.indexOf(by);
     if (i < 0) throw new Error(`'${by} is not a valid fragment`)
     const v = match.slice(1, match.length).map(d => Number.parseInt(d));
-
-    console.log('Version parts', v.join(', '));
 
     v[i]++;
 
     return prefix + v.join('.');
 }
 
+function findFragment() {
+    const { eventName } = github.context;
+
+    const labels = () => {
+        switch (eventName) {
+            case 'pull_request': {
+                console.log('Triggered on pull request');
+                const payload = github.context.payload as Webhooks.WebhookPayloadPullRequest;
+                return payload.pull_request.labels.map(l => l.name);
+            }
+            case 'repository_dispatch': {
+                console.log('Triggered on repository dispatch');
+                const { client_payload } = github.context.payload as any;
+                return [client_payload.fragment];
+            }
+        }
+    }
+
+    return (labels() ?? [])
+        .filter(l => fragments.includes(l))
+        .sort(l => fragments.indexOf(l))
+        .reverse()[0];
+}
+
 async function run() {
 
-    const last_version = core.getInput('last-version') || await findLastVersion();
+    const last_version = core.getInput('last-version') ?? await findLastVersion();
 
     if (last_version) {
-
-        const fragment = core.getInput('default-fragment')
+        const fragment = findFragment() ?? core.getInput('default-fragment')
+        console.log('Using version fragment', fragment)
+        console.log('Found last version', last_version)
         const next = increment(last_version, fragment);
-
         core.setOutput('next', next)
     } else {
         const fallback = core.getInput('fallback')
+        console.log('Did not find last version, using fallback', fallback)
         if (!versionRegex().test(fallback)) throw new Error(`Fallback '${fallback}' is not a valid version`)
         core.setOutput('next', fallback);
     }

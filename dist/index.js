@@ -9156,6 +9156,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
 
 
+const fragments = ['major', 'release', 'bug'];
 function versionRegex() {
     const prefix = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('prefix');
     return new RegExp(`${prefix}(\\d+)\\.(\\d+)\\.(\\d+)`);
@@ -9175,29 +9176,50 @@ async function findLastVersion() {
 function increment(version, by) {
     const match = version.match(versionRegex());
     const prefix = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('prefix');
-    console.log('Last version', version);
-    console.log('Regex', versionRegex());
     if (!match)
         throw new Error(`'${version}' is not a valid version`);
-    console.log('Match', match);
-    const fragments = ['major', 'release', 'bug'];
     const i = fragments.indexOf(by);
     if (i < 0)
         throw new Error(`'${by} is not a valid fragment`);
     const v = match.slice(1, match.length).map(d => Number.parseInt(d));
-    console.log('Version parts', v.join(', '));
     v[i]++;
     return prefix + v.join('.');
 }
+function findFragment() {
+    var _a;
+    const { eventName } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context;
+    const labels = () => {
+        switch (eventName) {
+            case 'pull_request': {
+                console.log('Triggered on pull request');
+                const payload = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
+                return payload.pull_request.labels.map(l => l.name);
+            }
+            case 'repository_dispatch': {
+                console.log('Triggered on repository dispatch');
+                const { client_payload } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
+                return [client_payload.fragment];
+            }
+        }
+    };
+    return ((_a = labels()) !== null && _a !== void 0 ? _a : [])
+        .filter(l => fragments.includes(l))
+        .sort(l => fragments.indexOf(l))
+        .reverse()[0];
+}
 async function run() {
-    const last_version = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('last-version') || await findLastVersion();
+    var _a, _b;
+    const last_version = (_a = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('last-version')) !== null && _a !== void 0 ? _a : await findLastVersion();
     if (last_version) {
-        const fragment = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('default-fragment');
+        const fragment = (_b = findFragment()) !== null && _b !== void 0 ? _b : _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('default-fragment');
+        console.log('Using version fragment', fragment);
+        console.log('Found last version', last_version);
         const next = increment(last_version, fragment);
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('next', next);
     }
     else {
         const fallback = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('fallback');
+        console.log('Did not find last version, using fallback', fallback);
         if (!versionRegex().test(fallback))
             throw new Error(`Fallback '${fallback}' is not a valid version`);
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('next', fallback);
