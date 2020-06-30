@@ -73,9 +73,15 @@ function findFragment() {
         .reverse()[0];
 }
 
+async function lastVersion() {
+    const input = core.getInput('last-version');
+    if(input) return input;
+    else return findLastVersion();
+}
+
 async function run() {
 
-    const last_version = core.getInput('last-version') ?? await findLastVersion();
+    const last_version = await lastVersion();
 
     if (last_version) {
         const fragment = findFragment() ?? core.getInput('default-fragment')

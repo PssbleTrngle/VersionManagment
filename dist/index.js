@@ -9217,11 +9217,18 @@ function findFragment() {
         .sort(l => fragments.indexOf(l))
         .reverse()[0];
 }
+async function lastVersion() {
+    const input = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('last-version');
+    if (input)
+        return input;
+    else
+        return findLastVersion();
+}
 async function run() {
-    var _a, _b;
-    const last_version = (_a = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('last-version')) !== null && _a !== void 0 ? _a : await findLastVersion();
+    var _a;
+    const last_version = await lastVersion();
     if (last_version) {
-        const fragment = (_b = findFragment()) !== null && _b !== void 0 ? _b : _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('default-fragment');
+        const fragment = (_a = findFragment()) !== null && _a !== void 0 ? _a : _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('default-fragment');
         console.log('Using version fragment', fragment);
         console.log('Found last version', last_version);
         const next = increment(last_version, fragment);
