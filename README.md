@@ -1,5 +1,8 @@
 # Version Managment
-Fetch latest version from tags and increment it based on pull request labels
+Fetch latest version from tags and increment it based on pull request labels.
+
+If trigger on `pull_request`, will extract the hightest fragment from the assigned labels names.
+If triggered on `repository_dispatch`, a fragment can be specified in the `client_payload`
 
 ## Inputs
 
