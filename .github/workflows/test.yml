@@ -8,12 +8,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        
+
       - uses: ./
         id: version
         with:
           token: ${{secrets.GITHUB_TOKEN}}
-          last_version: v0.1.0
+          last-version: v0.1.0
           prefix: v
 
       - name: Get output
