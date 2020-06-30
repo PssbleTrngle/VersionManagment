@@ -9176,9 +9176,9 @@ function increment(version, by) {
     const match = version.match(versionRegex());
     const prefix = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('prefix');
     console.log('Last version', version);
+    console.log('Regex', versionRegex());
     if (!match)
         throw new Error(`'${version}' is not a valid version`);
-    console.log('Regex', versionRegex());
     console.log('Match', match);
     const fragments = ['major', 'release', 'bug'];
     const i = fragments.indexOf(by);
