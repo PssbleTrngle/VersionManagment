@@ -1,4 +1,4 @@
-name: Test the action
+name: Test the push
 on: [push]
 
 jobs:

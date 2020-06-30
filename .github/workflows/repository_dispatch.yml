@@ -1,4 +1,4 @@
-name: Test the action
+name: Test the repository dispatch
 on:
   repository_dispatch:
     types: [release]
