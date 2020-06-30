@@ -9178,12 +9178,19 @@ function increment(version, by) {
     const prefix = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('prefix');
     if (!match)
         throw new Error(`'${version}' is not a valid version`);
-    const i = fragments.indexOf(by);
-    if (i < 0)
+    const inc = fragments.indexOf(by);
+    if (inc < 0)
         throw new Error(`'${by} is not a valid fragment`);
     const v = match.slice(1, match.length).map(d => Number.parseInt(d));
-    v[i]++;
-    return prefix + v.join('.');
+    const incremented = v.map((n, i) => {
+        if (i === inc)
+            return n + 1;
+        if (i < inc)
+            return 0;
+        else
+            return n;
+    });
+    return prefix + incremented.join('.');
 }
 function findFragment() {
     var _a;
@@ -9202,6 +9209,7 @@ function findFragment() {
             }
         }
     };
+    console.log('Found possible fragments', fragments);
     return ((_a = labels()) !== null && _a !== void 0 ? _a : [])
         .filter(l => fragments.includes(l))
         .sort(l => fragments.indexOf(l))

@@ -4,11 +4,12 @@
   "description": "",
   "main": "dist/index.js",
   "pre-commit": [
-    "build "
+    "pre-commit "
   ],
   "scripts": {
     "build": "ncc build src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pre-commit": "npm run build && git add dist/."
   },
   "repository": {
     "type": "git",

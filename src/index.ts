@@ -32,13 +32,17 @@ function increment(version: string, by: string) {
 
     if (!match) throw new Error(`'${version}' is not a valid version`)
 
-    const i = fragments.indexOf(by);
-    if (i < 0) throw new Error(`'${by} is not a valid fragment`)
+    const inc = fragments.indexOf(by);
+    if (inc < 0) throw new Error(`'${by} is not a valid fragment`)
     const v = match.slice(1, match.length).map(d => Number.parseInt(d));
 
-    v[i]++;
+    const incremented = v.map((n, i) => {
+        if(i === inc) return n + 1;
+        if(i < inc) return 0;
+        else return n;
+    })
 
-    return prefix + v.join('.');
+    return prefix + incremented.join('.');
 }
 
 function findFragment() {
@@ -58,6 +62,8 @@ function findFragment() {
             }
         }
     }
+
+    console.log('Found possible fragments', fragments)
 
     return (labels() ?? [])
         .filter(l => fragments.includes(l))
