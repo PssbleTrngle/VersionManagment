@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 
 function versionRegex() {
     const prefix = core.getInput('prefix');
-    return new RegExp(`${prefix}(\d+)\.(\d+)\.(\d+)`);
+    return new RegExp(`${prefix}(\\d+)\\.(\\d+)\\.(\\d+)`);
 }
 
 async function findLastVersion() {

@@ -9158,7 +9158,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function versionRegex() {
     const prefix = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('prefix');
-    return new RegExp(`${prefix}(\d+)\.(\d+)\.(\d+)`);
+    return new RegExp(`${prefix}(\\d+)\\.(\\d+)\\.(\\d+)`);
 }
 async function findLastVersion() {
     const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('token');
