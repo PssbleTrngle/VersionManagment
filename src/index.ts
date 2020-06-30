@@ -85,7 +85,7 @@ async function run() {
         core.setOutput('next', next)
     } else {
         const prefix = core.getInput('prefix');
-        const fallback = core.getInput('fallback') ?? `${prefix}1.0.0`
+        const fallback = core.getInput('fallback') || `${prefix}1.0.0`
         console.log('Did not find last version, using fallback', fallback)
         if (!versionRegex().test(fallback)) throw new Error(`Fallback '${fallback}' is not a valid version`)
         core.setOutput('next', fallback);

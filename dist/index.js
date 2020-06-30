@@ -9218,7 +9218,7 @@ function findFragment() {
         .reverse()[0];
 }
 async function run() {
-    var _a, _b, _c;
+    var _a, _b;
     const last_version = (_a = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('last-version')) !== null && _a !== void 0 ? _a : await findLastVersion();
     if (last_version) {
         const fragment = (_b = findFragment()) !== null && _b !== void 0 ? _b : _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('default-fragment');
@@ -9229,7 +9229,7 @@ async function run() {
     }
     else {
         const prefix = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('prefix');
-        const fallback = (_c = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('fallback')) !== null && _c !== void 0 ? _c : `${prefix}1.0.0`;
+        const fallback = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('fallback') || `${prefix}1.0.0`;
         console.log('Did not find last version, using fallback', fallback);
         if (!versionRegex().test(fallback))
             throw new Error(`Fallback '${fallback}' is not a valid version`);
