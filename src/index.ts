@@ -37,8 +37,8 @@ function increment(version: string, by: string) {
     const v = match.slice(1, match.length).map(d => Number.parseInt(d));
 
     const incremented = v.map((n, i) => {
-        if(i === inc) return n + 1;
-        if(i < inc) return 0;
+        if (i === inc) return n + 1;
+        if (i < inc) return 0;
         else return n;
     })
 
@@ -48,7 +48,7 @@ function increment(version: string, by: string) {
 function findFragment() {
     const { eventName } = github.context;
 
-    const labels = () => {
+    const labels = (() => {
         switch (eventName) {
             case 'pull_request': {
                 console.log('Triggered on pull request');
@@ -61,11 +61,11 @@ function findFragment() {
                 return [client_payload.fragment];
             }
         }
-    }
+    })();
 
-    console.log('Found possible fragments', fragments)
+    console.log('Found possible fragments', labelw)
 
-    return (labels() ?? [])
+    return (labels ?? [])
         .filter(l => fragments.includes(l))
         .sort(l => fragments.indexOf(l))
         .reverse()[0];
