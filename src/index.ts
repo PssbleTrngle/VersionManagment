@@ -17,7 +17,7 @@ async function findLastVersion() {
 
     const regex = versionRegex();
     const versions = data.map(t => t.name.match(regex)).filter(v => !!v) as RegExpMatchArray[];
-    console.log('Found previous versions', versions)
+    console.log('Found previous versions', versions.map(v => v[0]))
 
     const s = (a: RegExpMatchArray) => {
         const [, m, r, b] = a.map(v => Number.parseInt(v));

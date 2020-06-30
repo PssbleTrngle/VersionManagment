@@ -24,3 +24,6 @@ outputs:
 runs:
   using: 'node12'
   main: dist/index.js
+branding:
+  color: 'purple'
+  icon: 'arrow-up-circle'
