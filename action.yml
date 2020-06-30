@@ -1,0 +1,27 @@
+name: 'Version Managment'
+description: 'Fetch latest version from tags and increment it based on pull request labels'
+inputs:
+  token:
+    description: 'The github token'
+    required: true
+  last-version: 
+    description: 'Provide a custom last version instead of fetching it from the tags'
+    required: false
+  fallback:
+    description: 'The fallback version used if none has been found'
+    required: false
+    default: '$prefix0.1.0'
+  prefix:
+    description: 'The prefix used for version. ex.: v -> v1.2.0'
+    required: true
+    default: ''
+  default-fragment:
+    description: 'The version fragment used if none is found in the workflow'
+    required: true
+    default: 'bug'
+outputs:
+  next:
+    description: 'The incremented version'
+runs:
+  using: 'node12'
+  main: 'index.js'

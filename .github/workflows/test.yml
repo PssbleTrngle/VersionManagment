@@ -1,0 +1,17 @@
+name: Test the action
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test
+    steps:
+      - uses: actions/version-managment@v1
+        id: version
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          last_version: v0.1.0
+          prefix: v
+
+      - name: Get output
+        run: echo "Next version is ${{ steps.version.outputs.next }}"
