@@ -2,7 +2,9 @@ name: On Release
 
 on:
   release:
-    types: [ created ]
+    types: 
+      - created
+      - updated
 
 jobs:
   bot:
@@ -11,4 +13,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       
-      - run: echo '${{ GITHUB_REF }}'
+      - run: echo '${{ github.ref }}'
