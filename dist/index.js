@@ -9163,11 +9163,12 @@ function versionRegex() {
     return new RegExp(`${prefix}(\\d+)\\.(\\d+)\\.(\\d+)`);
 }
 async function getReleaseType() {
+    var _a;
     const labels = getLabels();
-    return labels
+    return (_a = labels
         .filter(l => types.includes(l))
         .sort(l => types.indexOf(l))
-        .reverse()[0];
+        .reverse()[0]) !== null && _a !== void 0 ? _a : 'release';
 }
 async function findLastVersion() {
     var _a;
@@ -9176,7 +9177,6 @@ async function findLastVersion() {
     console.log('Found tags', data.map(t => t.name));
     const regex = versionRegex();
     const versions = data.map(t => t.name.match(regex)).filter(v => !!v);
-    console.log('Found previous versions', versions.map(v => v[0]));
     const s = (a) => {
         const [, m, r, b] = a.map(v => Number.parseInt(v));
         return m * 1000000 + r * 1000 + b;
@@ -9221,7 +9221,6 @@ function getLabels() {
 }
 function findFragment() {
     const labels = getLabels();
-    console.log('Found possible fragments', labels);
     return labels
         .filter(l => fragments.includes(l))
         .sort(l => fragments.indexOf(l))
@@ -9253,7 +9252,8 @@ async function run() {
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('next', fallback);
     }
     const type = getReleaseType();
-    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput("type", type !== null && type !== void 0 ? type : 'release');
+    console.log(`Using release type '${type}'`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput("type", type);
 }
 run().catch(e => _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(e.message));
 

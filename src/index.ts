@@ -16,7 +16,7 @@ async function getReleaseType() {
     return labels
         .filter(l => types.includes(l))
         .sort(l => types.indexOf(l))
-        .reverse()[0];
+        .reverse()[0] ?? 'release';
 }
 
 async function findLastVersion(): Promise<string | undefined> {
@@ -27,7 +27,6 @@ async function findLastVersion(): Promise<string | undefined> {
 
     const regex = versionRegex();
     const versions = data.map(t => t.name.match(regex)).filter(v => !!v) as RegExpMatchArray[];
-    console.log('Found previous versions', versions.map(v => v[0]))
 
     const s = (a: RegExpMatchArray) => {
         const [, m, r, b] = a.map(v => Number.parseInt(v));
@@ -76,10 +75,7 @@ function getLabels(): string[] {
 }
 
 function findFragment() {
-
     const labels = getLabels();
-
-    console.log('Found possible fragments', labels)
 
     return labels
         .filter(l => fragments.includes(l))
@@ -112,7 +108,8 @@ async function run() {
     }
 
     const type = getReleaseType();
-    core.setOutput("type", type ?? 'release');
+    console.log(`Using release type '${type}'`)
+    core.setOutput("type", type);
 
 }
 
