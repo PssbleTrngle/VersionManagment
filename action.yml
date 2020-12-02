@@ -21,6 +21,8 @@ inputs:
 outputs:
   next:
     description: 'The incremented version'
+  type:
+    description: 'The release type'
 runs:
   using: 'node12'
   main: dist/index.js

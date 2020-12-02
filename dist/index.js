@@ -9157,9 +9157,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const fragments = ['major', 'feature', 'bug'];
+const types = ['beta', 'alpha'];
 function versionRegex() {
     const prefix = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('prefix');
     return new RegExp(`${prefix}(\\d+)\\.(\\d+)\\.(\\d+)`);
+}
+async function getReleaseType() {
+    const labels = getLabels();
+    return labels
+        .filter(l => types.includes(l))
+        .sort(l => types.indexOf(l))
+        .reverse()[0];
 }
 async function findLastVersion() {
     var _a;
@@ -9195,23 +9203,24 @@ function increment(version, by) {
     });
     return prefix + incremented.join('.');
 }
-function findFragment() {
-    var _a;
+function getLabels() {
     const { eventName } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context;
-    const labels = (_a = (() => {
-        switch (eventName) {
-            case 'pull_request': {
-                console.log('Triggered on pull request');
-                const payload = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
-                return payload.pull_request.labels.map(l => l.name);
-            }
-            case 'repository_dispatch': {
-                console.log('Triggered on repository dispatch');
-                const { client_payload } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
-                return [client_payload.fragment];
-            }
+    switch (eventName) {
+        case 'pull_request': {
+            console.log('Triggered on pull request');
+            const payload = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
+            return payload.pull_request.labels.map(l => l.name);
         }
-    })()) !== null && _a !== void 0 ? _a : [];
+        case 'repository_dispatch': {
+            console.log('Triggered on repository dispatch');
+            const { client_payload } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
+            return [client_payload.fragment, client_payload.type].filter(l => !!l);
+        }
+        default: return [];
+    }
+}
+function findFragment() {
+    const labels = getLabels();
     console.log('Found possible fragments', labels);
     return labels
         .filter(l => fragments.includes(l))
@@ -9243,6 +9252,8 @@ async function run() {
             throw new Error(`Fallback '${fallback}' is not a valid version`);
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('next', fallback);
     }
+    const type = getReleaseType();
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput("type", type !== null && type !== void 0 ? type : 'release');
 }
 run().catch(e => _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(e.message));
 

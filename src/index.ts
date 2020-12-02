@@ -1,12 +1,22 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { Webhooks } from '@octokit/webhooks'
+import { Webhooks } from '@octokit/webhooks';
 
 const fragments = ['major', 'feature', 'bug'];
+const types = ['beta', 'alpha'];
 
 function versionRegex() {
     const prefix = core.getInput('prefix');
     return new RegExp(`${prefix}(\\d+)\\.(\\d+)\\.(\\d+)`);
+}
+
+async function getReleaseType() {
+    const labels = getLabels();
+
+    return labels
+        .filter(l => types.includes(l))
+        .sort(l => types.indexOf(l))
+        .reverse()[0];
 }
 
 async function findLastVersion(): Promise<string | undefined> {
@@ -47,23 +57,27 @@ function increment(version: string, by: string) {
     return prefix + incremented.join('.');
 }
 
-function findFragment() {
+function getLabels(): string[] {
     const { eventName } = github.context;
 
-    const labels = (() => {
-        switch (eventName) {
-            case 'pull_request': {
-                console.log('Triggered on pull request');
-                const payload = github.context.payload as Webhooks.WebhookPayloadPullRequest;
-                return payload.pull_request.labels.map(l => l.name);
-            }
-            case 'repository_dispatch': {
-                console.log('Triggered on repository dispatch');
-                const { client_payload } = github.context.payload as any;
-                return [client_payload.fragment];
-            }
+    switch (eventName) {
+        case 'pull_request': {
+            console.log('Triggered on pull request');
+            const payload = github.context.payload as Webhooks.WebhookPayloadPullRequest;
+            return payload.pull_request.labels.map(l => l.name);
         }
-    })() ?? [];
+        case 'repository_dispatch': {
+            console.log('Triggered on repository dispatch');
+            const { client_payload } = github.context.payload as any;
+            return [client_payload.fragment, client_payload.type].filter(l => !!l);
+        }
+        default: return [];
+    }
+}
+
+function findFragment() {
+
+    const labels = getLabels();
 
     console.log('Found possible fragments', labels)
 
@@ -96,6 +110,9 @@ async function run() {
         if (!versionRegex().test(fallback)) throw new Error(`Fallback '${fallback}' is not a valid version`)
         core.setOutput('next', fallback);
     }
+
+    const type = getReleaseType();
+    core.setOutput("type", type ?? 'release');
 
 }
 

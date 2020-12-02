@@ -16,4 +16,4 @@ jobs:
           prefix: v
 
       - name: Get output
-        run: echo "Next version is ${{ steps.version.outputs.next }}"
+        run: echo "Next version is ${{ steps.version.outputs.next }} (${{ steps.version.outputs.type }})"
