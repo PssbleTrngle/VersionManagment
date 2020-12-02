@@ -39,6 +39,10 @@ Default increment fragment if none is found in `pull_request.labels` or `client_
 
 The incremented version
 
+### `type`
+
+The release type found in labels. Possibilities are `alpha` and `beta`. Falls back to `release`
+
 ## Example usage
 
 ```yml
