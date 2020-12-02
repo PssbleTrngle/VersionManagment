@@ -9162,7 +9162,7 @@ function versionRegex() {
     const prefix = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('prefix');
     return new RegExp(`${prefix}(\\d+)\\.(\\d+)\\.(\\d+)`);
 }
-async function getReleaseType() {
+function getReleaseType() {
     var _a;
     const labels = getLabels();
     return (_a = labels

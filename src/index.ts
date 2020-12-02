@@ -10,7 +10,7 @@ function versionRegex() {
     return new RegExp(`${prefix}(\\d+)\\.(\\d+)\\.(\\d+)`);
 }
 
-async function getReleaseType() {
+function getReleaseType() {
     const labels = getLabels();
 
     return labels
