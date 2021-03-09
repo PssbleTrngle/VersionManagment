@@ -46,7 +46,7 @@ The release type found in labels. Possibilities are `alpha` and `beta`. Falls ba
 ## Example usage
 
 ```yml
-- uses: actions/version-managment@v1
+- uses: PssbleTrngle/VersionManagment@v2
   id: version
   with:
       token: ${{secrets.GITHUB_TOKEN}}
